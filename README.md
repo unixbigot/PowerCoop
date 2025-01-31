@@ -36,3 +36,36 @@ over Bluetooth, so you can run a phone, a laptop,
 a soldering iron, a hotplate, and a couple of
 devices under test from it.
 ```
+
+# 6P process
+
+## Problem - what do users want/need
+
+See https://github.com/unixbigot/PowerCoop/issues
+
+## Proposal - how are we gonna solve the problem
+
+## Players - What partial solutions are out there
+
+I (kit, @unixbigot) have or have ordered all of these:
+
+* slightly less sucky power banks
+  * https://aliexpress.com/item/1005004645663172.html
+  * https://aliexpress.com/item/1005007295821577.html
+  * https://aliexpress.com/item/1005006988280869.html
+* Off the shelf battery management
+  * https://aliexpress.com/item/1005006071626722.html
+* Microcontroller with PD support
+  * https://aliexpress.com/item/1005005793197807.html
+  * https://aliexpress.com/item/1005005793197807.html
+* Various DC<->PD modules
+  *  https://aliexpress.com/item/1005006463687480.html
+  *  https://aliexpress.com/item/1005006113132068.html
+  *  https://aliexpress.com/item/1005006738365927.html
+  *  https://aliexpress.com/item/1005006572686976.html
+
+## Proof of concept - Validate feasibility, select Parts
+
+## Prototype - Iterate a lot
+
+## Product - deliver on promises
