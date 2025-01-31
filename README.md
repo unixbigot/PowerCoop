@@ -10,6 +10,14 @@ Some have lights or small displays to report the State of Charge (SoC) and possi
 
 They. All.  Suck.   
 
+* Power banks lie egregiously about their capacity
+* Power banks ruin cells through sloppy charge/discharge management
+* Power banks do not cope with aging cells
+* Power banks do not give accurate predictions of available runtime
+* Power banks cannot be monitored to tell devices about their capacity and state
+* Power banks are unfixable
+* Power banks are typically closely coupled to one cell size and/or count
+
 # What is a Power Coop
 
 My vision for a power bank that does not suck
