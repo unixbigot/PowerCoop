@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "LCSC-powercoop")(type "KiCad")(uri "/Users/chris/Microcode/accelerando/accelerando-iot/powercoop/LCSC.kicad_sym")(options "")(descr ""))
+)
