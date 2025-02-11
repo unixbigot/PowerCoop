@@ -1,0 +1,9 @@
+# In THIS house, we recognise MacOS likes to leave little poos everywhere
+**/.DS_Store
+
+# KiCad backup & autosave files
+**/*-backups
+**/_autosave-*
+**/~*
+**/#auto_saved_files#
+**/fp-info-cache
