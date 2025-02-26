@@ -72,6 +72,8 @@ Equation 4: Cdith(F) = (1) / (2.8 \* R(Fsw) \* F(mod))
 
 ### Inductor Selection
 
+Assuming R(fsw) = 47k.
+
 8.2.2.3: "There are three important inductor specifications: inductance, saturation current, and DC resistance. The TPS55288 is designed to work with inductor values between 1 μH and 10 μH. The inductor selection is based on consideration of both buck and boost modes of operation."
 
 Equation 9 (buck mode): L = ((Vin(max) - Vout) \* Vout) / (ΔI(l(p-p)) \* F(sw) \* Vin(max))
@@ -83,6 +85,28 @@ Where:
 * ΔI(l(p-p)) is the peak to peak ripple current of the inductor
 * F(sw) is the switching frequency
 
+Assuming V(in) = 36V, V(out) = 18V:
+
+|L (uH)|ΔI(l(p-p)) A|
+|-|-|
+|1|21.33|
+|1.2|17.78|
+|1.5|14.22|
+|1.8|11.85|
+|2.2|9.7|
+|2.7|7.9|
+|3.3|6.46|
+|3.9|5.47|
+|3.76 (4.7uH min)|5.66|
+|4.7|4.54|
+|5.64 (4.7uH max)|3.77|
+|5.6|3.81|
+|6.8|3.14|
+|8.2|2.6|
+|10|2.13|
+
+Also need to account for 20% tolerance which results in an inductor somewhere between 3.76uH and 5.64uH.
+
 Equation 10 (boost mode): L = (Vin \* (Vout(max) - Vin)) / (ΔI(l(p-p)) \* F(sw) \* Vout(max))
 
 Where:
@@ -91,6 +115,28 @@ Where:
 * Vin is the input voltage (2.7V to 36V or design limit)
 * ΔI(l(p-p)) is the peak to peak ripple current of the inductor
 * F(sw) is the switching frequency
+
+Assuming V(in) = 11V, V(out) = 22V:
+
+|L (uH)|ΔI(l(p-p)) A|
+|-|-|
+|1|13.04|
+|1.2|10.86|
+|1.5|8.69|
+|1.8|7.24|
+|2.2|5.93|
+|2.7|4.83|
+|3.3|3.95|
+|3.9|3.34|
+|3.76 (4.7uH min)|3.47|
+|4.7|2.77|
+|5.64 (4.7uH max)|2.31|
+|5.6|2.33|
+|6.8|1.92|
+|8.2|1.59|
+|10|1.3|
+
+Also need to account for 20% tolerance which results in an inductor somewhere between 3.76uH and 5.64uH.
 
 Equation 11 (boost mode): I(dc) = (Vout \* Iout) / (Vin \* efficency)
 
@@ -101,11 +147,33 @@ Where:
 * Vin is the input voltage (2.7V or design limit)
 * efficency is the percentage conversion efficency of the regulator in the range of 0 to 1
 
+Assuming V(out) = 22V, I(out) = 5A, efficency = 90%
+
+|V(in)|I(dc)|
+|-|-|
+|2.7|45.27|
+|3|40.74|
+|4|30.56|
+|5|24.44|
+|6|20.37|
+|7|17.46|
+|8|15.28|
+|9|13.58|
+|10|12.22|
+|11|11.11|
+|12|10.19|
+|15|8.15|
+|20|6.11|
+
 Equation 12: algebraic transformation of equation 10 to solve for ΔI(l(p-p))
 
 Equation 13: Ipeak = Idc + (ΔI(l(p-p)) / 2)
 
-Inductor I(sat) must be greater than the calculated I(peak). The biggest contributor to inductor current is boost-mode conversion from Vin(min) to Vout(max). Running the chip's minimum input of 2.7V to maximum output of 22V requires around 45A of input current! We should probably design around a limit of 20A, which specifying a minimum input voltage of 7V will achieve.  Specifying a minimum 7V rules out any 2S Lithium battery configurations, but still permits 3S configurations.  A 4.7uH inductor as suggested in the datasheet will work fine, and a 6.8uH inductor will drop the ripple current at the expense of slower transient response.  A suitable inductor would be a [Coilcraft XAL1510-472](https://www.lcsc.com/product-detail/Power-Inductors_Coilcraft-XAL1510-472MED_C3911452.html), [YJYCOIN YSPIT1510A-4R7M](https://www.lcsc.com/product-detail/Power-Inductors_YJYCOIN-YSPIT1510A-4R7M_C19188711.html), or similar.
+Assuming worst-case of boost mode, V(in) = 7V, V(out) = 22V, I(out) = 5A, L = 4.7uH - 20%: I(peak) = 19A
+
+Inductor I(sat) must be greater than the calculated I(peak). The biggest contributor to inductor current is boost-mode conversion from Vin(min) to Vout(max). Running the chip's minimum input of 2.7V to maximum output of 22V requires around 45A of input current! We should probably design around a limit of 20A, which specifying a minimum input voltage of 7V will achieve.  Specifying a minimum 7V rules out any 2S Lithium battery configurations, but still permits 3S configurations for Lithium chemistries at minimum discharge cutoff voltage.  A 4.7uH inductor as suggested in the datasheet will work fine, and a 6.8uH inductor will drop the ripple current at the expense of slower transient response.  As the switching frequency increases, the ripple current also decreases, however switching losses increase. A suitable inductor would be a [Coilcraft XAL1510-472](https://www.lcsc.com/product-detail/Power-Inductors_Coilcraft-XAL1510-472MED_C3911452.html), [YJYCOIN YSPIT1510A-4R7M](https://www.lcsc.com/product-detail/Power-Inductors_YJYCOIN-YSPIT1510A-4R7M_C19188711.html), or similar.
+
+The inductor current calculation also informs the current capacity of the external MOSFETs for boost mode.
 
 ### Input Capacitor
 
