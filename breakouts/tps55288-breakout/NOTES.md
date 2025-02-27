@@ -177,4 +177,49 @@ The inductor current calculation also informs the current capacity of the extern
 
 ### Input Capacitor
 
+8.2.2.4: "In buck mode, the input capacitor supplies high ripple current"
+
+Equation 14: I(Cin-RMS) = Iout \* sqrt((Vout \* (Vin-Vout)) / (Vin \* Vin))
+
+8.2.2.4: "The maximum RMS current occurs at the output voltage is half of the input voltage, which gives I(Cin-RMS) = Iout / 2"
+
+Assuming buck mode, V(in) = 36V, V(out) = 18V, I(out) = 5A: I(Cin-RMS) = 2.5A.
+
 ### Output Capacitor
+
+8.2.2.5: "In boost mode, the output capacitor conducts high ripple current"
+
+Equation 15: I(Cout-RMS) = Iout \* sqrt((Vout / Vin) - 1)
+
+8.2.2.5: "... where the minimum input voltage and the maximum output voltage correspond to the maximum capacitor current."
+
+Assuming worst-case of boost mode, V(in) = 7V, V(out) = 22V, I(out) = 5A: I(Cout-RMS) = 7.32A
+
+That's a big ripple current!
+
+8.2.2.5: "The ESR of the output capacitor causes an output voltage ripple"
+
+Equation 16: V(ripple-ESR) = ((Iout \* Vout) / Vin) \* Rcout
+
+Assuming I(out) = 5A, V(out) = 22V, V(in) = 7V, R(Cout) = 10mΩ: V(ripple-ESR) = 0.16V
+
+Using multiple capacitors in parallel will lower the total ESR.
+
+Equation 17: V(ripple) = (Iout \* (1 - (Vin / Vout))) / (Cout \* Fsw)
+
+Assuming I(out) = 5A, V(out) = 22V, V(in) = 7V, V(ripple-ESR) = 0.16V:
+
+|C(out) uF|V(ripple)|5% Tolerance|2% Tolerance|
+|-|-|-|-|
+|180|1.05|Fail|Fail|
+|220|0.86|Pass|Fail|
+|270|0.70|Pass|Fail|
+|330|0.57|Pass|Fail|
+|390|0.49|Pass|Fail|
+|470|0.4|Pass|Fail|
+|560|0.34|Pass|Fail|
+|680|0.28|Pass|Pass|
+
+We will probably need Alu-Poly capacitors to hit the ESR ripple current for the capacitance required, despite their high leakage current. AluElec has a much higher ESR which compounds the ripple voltage problem plus a lower ripple current rating (due to higher ESR). MLCCs need capacitance de-rating at DC voltage offset, eg a 22uF capacitor is de-rated to about 8uF at 22V DC offset.
+
+2x Panasonic OS-CON [25SVPK470M](https://industrial.panasonic.com/ww/products/pt/os-con/models/25SVPK470M) or equivalent should be suitable for output capacitors over the entire voltage and tolerance range to meet 2% ripple voltage regulation. As long as temperature is kept below 105℃ they will also meet ripple current capacity.
