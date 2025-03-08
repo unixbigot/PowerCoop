@@ -175,6 +175,10 @@ Inductor I(sat) must be greater than the calculated I(peak). The biggest contrib
 
 The inductor current calculation also informs the current capacity of the external MOSFETs for boost mode.
 
+8.2.2.7: "The inner current loop uses internal compensation and requires the inductor value must be larger than 1.2/F(sw)"
+
+Minimum L = 2.84uH
+
 ### Input Capacitor
 
 8.2.2.4: "In buck mode, the input capacitor supplies high ripple current"
@@ -222,4 +226,58 @@ Assuming I(out) = 5A, V(out) = 22V, V(in) = 7V, V(ripple-ESR) = 0.16V:
 
 We will probably need Alu-Poly capacitors to hit the ESR ripple current for the capacitance required, despite their high leakage current. AluElec has a much higher ESR which compounds the ripple voltage problem plus a lower ripple current rating (due to higher ESR). MLCCs need capacitance de-rating at DC voltage offset, eg a 22uF capacitor is de-rated to about 8uF at 22V DC offset.
 
-2x Panasonic OS-CON [25SVPK470M](https://industrial.panasonic.com/ww/products/pt/os-con/models/25SVPK470M) or equivalent should be suitable for output capacitors over the entire voltage and tolerance range to meet 2% ripple voltage regulation. As long as temperature is kept below 105℃ they will also meet ripple current capacity.
+2x Panasonic OS-CON [25SEF330M](https://industrial.panasonic.com/ww/products/pt/os-con/models/25SEF330M) or equivalent should be suitable for output capacitors over the entire voltage and tolerance range to meet 2% ripple voltage regulation. As long as temperature is kept below 105℃ they will also meet ripple current capacity.
+
+### Control Loop Compensation
+
+Idiot me didn't see the [calculator that TI provides](https://www.ti.com/tool/download/SLVRBF9)... because they hide that entire section on mobile!
+
+### Enable / UVLO
+
+EN voltage range: -0.3V to 20V, EN_H threshold 1.15V max, EN_L threshold 0.4V min.
+
+UVLO rising threshold: 1.23V nominal (1.20V to 1.26V).
+
+7.3.4: "When the input voltage at the VIN pin is above the input UVLO rising threshold of 3 V and the EN/UVLO pin is pulled above 1.15 V but less than the enable UVLO threshold of 1.23 V, the TPS55288 is enabled but still in standby mode." and configures based on MODE resistor.
+
+Equation 1: V(in-uvlo) = V(uvlo) * (1 + (R1 / R2))
+
+Where V(uvlo) = 1.23V
+
+Target UVLO = 7V (meets I(peak) of < 20A)
+
+Equation 2: ΔV(in-uvlo) = I(uvlo) * R1
+
+Where I(uvlo) = 5uA +/- 10%, and ΔV is on the EN/UVLO pin (not Vin)
+
+Default ΔV(in-uvlo) = 14mV nominal (8mV to 20mV). Default equivalent R1 = 2.8k nominal (1.6k to 4k)
+
+Using E24 resistor values R1 = 4.3k and R2 = 1k, V(in-uvlo) = 6.52V with ΔV(uvlo-hyst) = 114mV, which causes I(peak) = 20.25A according to Equation 13.
+
+### Inductor average current limit
+
+Equation 5: I(lim-avg) = (min(1, 0.6 \* Vout) \* 330000) / Rilim
+
+I(lim-peak) = 25A nominal
+
+|R(Fsw) Ω|I(lim-avg) A|
+|-|-|
+|15k|22|
+|16k|20.63|
+|18k|18.33|
+|20k|16.5|
+|22k|15|
+
+A 16k resistor will be suitable for R(ilim) according to Equation 13 result of 18.75A average current.
+
+### External Voltage Feedback
+
+7.3.11: "TI recommends using 100 kΩ for the up resistor R(fb-up)"
+
+Equation 6: Vout = Vref * (1 + (Rfb-up / Rfb-bt))
+
+V(ref) range programable 0.045V to 1.2V
+
+### Cable Droop Compensation
+
+Equation 7
